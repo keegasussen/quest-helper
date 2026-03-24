@@ -116,6 +116,7 @@ import com.questhelper.helpers.quests.clocktower.ClockTower;
 import com.questhelper.helpers.quests.coldwar.ColdWar;
 import com.questhelper.helpers.quests.contact.Contact;
 import com.questhelper.helpers.quests.cooksassistant.CooksAssistant;
+import com.questhelper.helpers.quests.cooksassistant.CooksAssistantSpeedrun;
 import com.questhelper.helpers.quests.creatureoffenkenstrain.CreatureOfFenkenstrain;
 import com.questhelper.helpers.quests.currentaffairs.CurrentAffairs;
 import com.questhelper.helpers.quests.darknessofhallowvale.DarknessOfHallowvale;
@@ -296,7 +297,7 @@ public enum QuestHelperQuest
 	//Free Quests
 	BELOW_ICE_MOUNTAIN(new BelowIceMountain(), Quest.BELOW_ICE_MOUNTAIN, QuestVarbits.QUEST_BELOW_ICE_MOUNTAIN, QuestDetails.Type.F2P, QuestDetails.Difficulty.NOVICE),
 	BLACK_KNIGHTS_FORTRESS(new BlackKnightFortress(), Quest.BLACK_KNIGHTS_FORTRESS, QuestVarPlayer.QUEST_BLACK_KNIGHTS_FORTRESS, QuestDetails.Type.F2P, QuestDetails.Difficulty.INTERMEDIATE),
-	COOKS_ASSISTANT(new CooksAssistant(), Quest.COOKS_ASSISTANT, QuestVarPlayer.QUEST_COOKS_ASSISTANT, QuestDetails.Type.F2P, QuestDetails.Difficulty.NOVICE),
+	COOKS_ASSISTANT(new CooksAssistant(), List.of(new CooksAssistantSpeedrun()), Quest.COOKS_ASSISTANT, QuestVarPlayer.QUEST_COOKS_ASSISTANT, QuestDetails.Type.F2P, QuestDetails.Difficulty.NOVICE),
 	THE_CORSAIR_CURSE(new TheCorsairCurse(), Quest.THE_CORSAIR_CURSE, QuestVarbits.QUEST_THE_CORSAIR_CURSE, QuestDetails.Type.F2P, QuestDetails.Difficulty.INTERMEDIATE),
 	DEMON_SLAYER(new DemonSlayer(), Quest.DEMON_SLAYER, QuestVarbits.QUEST_DEMON_SLAYER, QuestDetails.Type.F2P, QuestDetails.Difficulty.NOVICE),
 	DORICS_QUEST(new DoricsQuest(), Quest.DORICS_QUEST, QuestVarPlayer.QUEST_DORICS_QUEST, QuestDetails.Type.F2P, QuestDetails.Difficulty.NOVICE),
@@ -698,9 +699,13 @@ public enum QuestHelperQuest
 	@Getter
 	private final QuestHelper questHelper;
 
+	@Getter
+	private final List<QuestHelper> altHelpers;
+
 	QuestHelperQuest(QuestHelper questHelper, int id, String name, QuestVarbits varbit, QuestDetails.Type questType, QuestDetails.Difficulty difficulty)
 	{
 		this.questHelper = questHelper;
+		this.altHelpers = List.of();
 		this.id = id;
 		this.name = name;
 		this.keywords = titleToKeywords(name);
@@ -715,6 +720,7 @@ public enum QuestHelperQuest
 	QuestHelperQuest(QuestHelper questHelper, Quest quest, QuestVarbits varbit, QuestDetails.Type questType, QuestDetails.Difficulty difficulty)
 	{
 		this.questHelper = questHelper;
+		this.altHelpers = List.of();
 		this.id = quest.getId();
 		this.name = quest.getName();
 		this.keywords = titleToKeywords(name);
@@ -729,6 +735,22 @@ public enum QuestHelperQuest
 	QuestHelperQuest(QuestHelper questHelper, Quest quest, QuestVarPlayer varPlayer, QuestDetails.Type questType, QuestDetails.Difficulty difficulty)
 	{
 		this.questHelper = questHelper;
+		this.altHelpers = List.of();
+		this.id = quest.getId();
+		this.name = quest.getName();
+		this.keywords = titleToKeywords(name);
+		this.varbit = null;
+		this.varPlayer = varPlayer;
+		this.questType = questType;
+		this.difficulty = difficulty;
+		this.completeValue = -1;
+		this.developerQuest = false;
+	}
+
+	QuestHelperQuest(QuestHelper questHelper, List<QuestHelper> altHelpers, Quest quest, QuestVarPlayer varPlayer, QuestDetails.Type questType, QuestDetails.Difficulty difficulty)
+	{
+		this.questHelper = questHelper;
+		this.altHelpers = altHelpers;
 		this.id = quest.getId();
 		this.name = quest.getName();
 		this.keywords = titleToKeywords(name);
@@ -743,6 +765,7 @@ public enum QuestHelperQuest
 	QuestHelperQuest(QuestHelper questHelper, int id, String name, QuestVarPlayer varPlayer, QuestDetails.Type questType, QuestDetails.Difficulty difficulty)
 	{
 		this.questHelper = questHelper;
+		this.altHelpers = List.of();
 		this.id = id;
 		this.name = name;
 		this.keywords = titleToKeywords(name);
@@ -757,6 +780,7 @@ public enum QuestHelperQuest
 	QuestHelperQuest(QuestHelper questHelper, int id, String name, List<String> keywords, QuestVarbits varbit, QuestDetails.Type questType, QuestDetails.Difficulty difficulty)
 	{
 		this.questHelper = questHelper;
+		this.altHelpers = List.of();
 		this.id = id;
 		this.name = name;
 		this.keywords = Stream.concat(titleToKeywords(name).stream(), keywords.stream()).collect(Collectors.toList());
@@ -771,6 +795,7 @@ public enum QuestHelperQuest
 	QuestHelperQuest(QuestHelper questHelper, String name, QuestVarbits varbit, int completeValue, QuestDetails.Type questType, QuestDetails.Difficulty difficulty)
 	{
 		this.questHelper = questHelper;
+		this.altHelpers = List.of();
 		this.id = -1;
 		this.name = name;
 		this.keywords = titleToKeywords(name);
@@ -786,6 +811,7 @@ public enum QuestHelperQuest
 	QuestHelperQuest(QuestHelper questHelper, String name, QuestDetails.Type questType, QuestDetails.Difficulty difficulty)
 	{
 		this.questHelper = questHelper;
+		this.altHelpers = List.of();
 		this.id = -1;
 		this.name = name;
 		this.keywords = titleToKeywords(name);
@@ -801,6 +827,7 @@ public enum QuestHelperQuest
 	QuestHelperQuest(QuestHelper questHelper, String name, Skill skill, int completeValue, QuestDetails.Type questType, QuestDetails.Difficulty difficulty)
 	{
 		this.questHelper = questHelper;
+		this.altHelpers = List.of();
 		this.id = -1;
 		this.name = name;
 		this.keywords = titleToKeywords(name);
@@ -817,6 +844,7 @@ public enum QuestHelperQuest
 	QuestHelperQuest(QuestHelper questHelper, String name, PlayerQuests playerQuests, int completeValue, boolean developerQuest)
 	{
 		this.questHelper = questHelper;
+		this.altHelpers = List.of();
 		this.id = -1;
 		this.name = name;
 		this.keywords = titleToKeywords(name);
