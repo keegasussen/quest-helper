@@ -266,6 +266,16 @@ public interface QuestHelperConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "hideOverlayInCombat",
+		name = "Hide overlays in combat",
+		description = "Hides all overlays while you are in combat"
+	)
+	default boolean hideOverlayInCombat()
+	{
+		return false;
+	}
+
+	@ConfigItem(
 		keyName = "stewBoostsPanel",
 		name = "Use Spicy stew for boosts",
 		description = "Raises the boost maximum boost for certain skills to 5"

@@ -54,7 +54,7 @@ public class QuestHelperOverlay extends OverlayPanel
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
-		if (!plugin.getConfig().showOverlay())
+		if (!plugin.getConfig().showOverlay() || (plugin.getConfig().hideOverlayInCombat() && plugin.isInCombat()))
 		{
 			return super.render(graphics);
 		}

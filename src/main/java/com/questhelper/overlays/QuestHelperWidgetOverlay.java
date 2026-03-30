@@ -53,6 +53,11 @@ public class QuestHelperWidgetOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
+		if (plugin.getConfig().hideOverlayInCombat() && plugin.isInCombat())
+		{
+			return null;
+		}
+
 		QuestHelper quest = plugin.getSelectedQuest();
 
 		if (quest != null && quest.getCurrentStep() != null)

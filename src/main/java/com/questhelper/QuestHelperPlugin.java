@@ -168,6 +168,9 @@ public class QuestHelperPlugin extends Plugin
 
 	boolean profileChanged;
 
+	private static final int COMBAT_TIMEOUT_TICKS = 8;
+	private int lastCombatTick = -1;
+
 	private final Collection<String> configEvents = Arrays.asList("orderListBy", "filterListBy", "questDifficulty", "showCompletedQuests");
 	private final Collection<String> configItemEvents = Arrays.asList("highlightNeededQuestItems", "highlightNeededMiniquestItems", "highlightNeededAchievementDiaryItems");
 
@@ -565,6 +568,27 @@ public class QuestHelperPlugin extends Plugin
 				questMenuHandler.startUpQuest(questName);
 			}
 		}
+	}
+
+	@Subscribe
+	public void onHitsplatApplied(HitsplatApplied event)
+	{
+		Player local = client.getLocalPlayer();
+		if (local == null)
+		{
+			return;
+		}
+
+		Actor actor = event.getActor();
+		if (actor == local || (actor instanceof NPC && actor.getInteracting() == local))
+		{
+			lastCombatTick = client.getTickCount();
+		}
+	}
+
+	public boolean isInCombat()
+	{
+		return lastCombatTick != -1 && client.getTickCount() - lastCombatTick < COMBAT_TIMEOUT_TICKS;
 	}
 
 	public void displayPanel()

@@ -52,6 +52,11 @@ public class QuestHelperWorldOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
+		if (plugin.getConfig().hideOverlayInCombat() && plugin.isInCombat())
+		{
+			return null;
+		}
+
 		boolean noOverlaysDrawn = !plugin.getConfig().showSymbolOverlay()
 			&& plugin.getConfig().highlightStyleGroundItems() == QuestHelperConfig.GroundItemHighlightStyle.NONE
 			&& plugin.getConfig().highlightStyleNpcs() == QuestHelperConfig.NpcHighlightStyle.NONE

@@ -49,6 +49,11 @@ public class QuestHelperWorldLineOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
+		if (plugin.getConfig().hideOverlayInCombat() && plugin.isInCombat())
+		{
+			return null;
+		}
+
 		if (!plugin.getConfig().showWorldLines())
 		{
 			return null;
